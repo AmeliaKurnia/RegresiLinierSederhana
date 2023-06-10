@@ -38,7 +38,7 @@ def home():
     st.write("Aplikasi ini digunakan untuk melakukan analisis regresi linier sederhana.")
     st.write("Regresi linier sederhana adalah metode statistik yang digunakan untuk memodelkan hubungan antara sebuah variabel dependen (Y) dengan sebuah variabel independen (X).")
     st.write("Dengan menggunakan regresi linier sederhana, kita dapat memprediksi nilai variabel dependen berdasarkan nilai variabel independen.")
-    st.write("Aplikasi ini memiliki dua halaman utama: Korelasi dan Regresi. Silakan pilih halaman yang ingin diakses pada sidebar di sebelah kiri.")
+    st.write("Aplikasi ini memiliki dua halaman utama: Korelasi dan Regresi. Silakan pilih halaman yang ingin diakses pada sidebar di sebelah kiri. Thank you~~ ")
 
 # Halaman Korelasi
 def korelasi():
@@ -77,7 +77,8 @@ def korelasi():
             else:
                 st.write("Tidak terdapat hubungan linier antara X dan Y.")
     
-    # Tambahkan bagian untuk opsi upload file jika diperlukan
+    else:
+        uploaded_file = st.file_uploader("Upload File", type=["csv", "xlsx"])
 
 # Halaman Regresi
 def regresi():
@@ -104,6 +105,7 @@ def regresi():
             st.write(f"Nilai Beta 0: {beta_0:.4f}")
             st.write(f"Nilai Beta 1: {beta_1:.4f}")
             st.write(f"Nilai R-Squared: {r_squared:.4f}")
+            st.write(f"Y = {beta_0:.4f} + {beta_1:.4f}X")
             
             # Model regresi
             plt.scatter(X, Y)
@@ -113,15 +115,8 @@ def regresi():
             plt.title("Model Regresi")
             st.pyplot(plt)
             
-            # Analisis kebaikan model
-            if r_squared >= 0.7:
-                st.write("Model regresi memiliki kebaikan yang baik.")
-            elif r_squared >= 0.5:
-                st.write("Model regresi memiliki kebaikan yang cukup.")
-            else:
-                st.write("Model regresi memiliki kebaikan yang rendah.")
-    
-    # Tambahkan bagian untuk opsi upload file jika diperlukan
+    else:
+        uploaded_file = st.file_uploader("Upload File", type=["csv", "xlsx"])
 
 # Main Program
 def main():
