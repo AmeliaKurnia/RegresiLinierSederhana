@@ -35,10 +35,10 @@ def calculate_r_squared(X, Y, beta_0, beta_1):
 def home():
     st.title("Regresi Linier Sederhana")
     st.write("Selamat datang di aplikasi Regresi Linier Sederhana!")
-    st.write("Aplikasi ini digunakan untuk melakukan analisis regresi linier sederhana.")
     st.write("Regresi linier sederhana adalah metode statistik yang digunakan untuk memodelkan hubungan antara sebuah variabel dependen (Y) dengan sebuah variabel independen (X).")
     st.write("Dengan menggunakan regresi linier sederhana, kita dapat memprediksi nilai variabel dependen berdasarkan nilai variabel independen.")
-    st.write("Aplikasi ini memiliki dua halaman utama: Korelasi dan Regresi. Silakan pilih halaman yang ingin diakses pada sidebar di sebelah kiri. Thank you~~ ")
+    st.write("Aplikasi ini memiliki dua halaman utama: Korelasi dan Regresi. Silakan pilih halaman yang ingin diakses pada sidebar di sebelah kiri. ")
+    st.write("Saya menyadari bahwa web ini masih belum sempurna dan banyak kurangnya, oleh karena itu mohon maaf dan kasih nilai excelent yaa hehehe. Thank you~~ ")
 
 # Halaman Korelasi
 def korelasi():
