@@ -42,7 +42,7 @@ def home():
 
 # Halaman Korelasi
 def korelasi():
-    st.title("Analisis Korelasi")
+    st.title("Menghitung Nilai Korelasi")
     st.write("Halaman ini digunakan untuk melakukan analisis korelasi antara dua variabel.")
     
     option = st.radio("Pilih Opsi", ("Data Manual", "Upload File"))
