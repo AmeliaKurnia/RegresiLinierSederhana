@@ -1,124 +1,139 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+import numpy as np
 
-# Page: Home
+# Menghitung nilai korelasi
+def calculate_correlation(X, Y):
+    mean_X = np.mean(X)
+    mean_Y = np.mean(Y)
+    numerator = np.sum((X - mean_X) * (Y - mean_Y))
+    denominator = np.sqrt(np.sum((X - mean_X)**2) * np.sum((Y - mean_Y)**2))
+    correlation = numerator / denominator
+    return correlation
+
+# Menghitung koefisien regresi beta 0 dan beta 1
+def calculate_regression_coefficients(X, Y):
+    mean_X = np.mean(X)
+    mean_Y = np.mean(Y)
+    numerator = np.sum((X - mean_X) * (Y - mean_Y))
+    denominator = np.sum((X - mean_X)**2)
+    beta_1 = numerator / denominator
+    beta_0 = mean_Y - beta_1 * mean_X
+    return beta_0, beta_1
+
+# Menghitung R-Squared
+def calculate_r_squared(X, Y, beta_0, beta_1):
+    mean_Y = np.mean(Y)
+    predicted_Y = beta_0 + beta_1 * X
+    numerator = np.sum((Y - predicted_Y)**2)
+    denominator = np.sum((Y - mean_Y)**2)
+    r_squared = 1 - (numerator / denominator)
+    return r_squared
+
+# Halaman Home
 def home():
-    st.title("Aplikasi Regresi Linier Sederhana")
-    st.write("Regresi linier sederhana adalah metode statistik untuk memodelkan hubungan antara variabel independen (X) dan variabel dependen (Y). Regresi linier sederhana digunakan untuk mengestimasi nilai Y berdasarkan nilai X.")
-    st.write("Regresi linier sederhana berguna untuk memahami dan memprediksi hubungan linier antara dua variabel. Sehingga dapat membantu dalam analisis dan prediksi data dalam berbagai bidang seperti ilmu sosial, ekonomi, dan ilmu alam.")
+    st.title("Regresi Linier Sederhana")
+    st.write("Selamat datang di aplikasi Regresi Linier Sederhana!")
+    st.write("Aplikasi ini digunakan untuk melakukan analisis regresi linier sederhana.")
+    st.write("Regresi linier sederhana adalah metode statistik yang digunakan untuk memodelkan hubungan antara sebuah variabel dependen (Y) dengan sebuah variabel independen (X).")
+    st.write("Dengan menggunakan regresi linier sederhana, kita dapat memprediksi nilai variabel dependen berdasarkan nilai variabel independen.")
+    st.write("Aplikasi ini memiliki dua halaman utama: Korelasi dan Regresi. Silakan pilih halaman yang ingin diakses pada sidebar di sebelah kiri.")
 
-# Page: Korelasi
+# Halaman Korelasi
 def korelasi():
-    st.title("Korelasi")
-    st.write("Silakan pilih opsi untuk memasukkan data:")
+    st.title("Analisis Korelasi")
+    st.write("Halaman ini digunakan untuk melakukan analisis korelasi antara dua variabel.")
     
-    option = st.selectbox("Pilih opsi:", ("Masukkan data manual", "Upload file CSV/Excel"))
+    option = st.radio("Pilih Opsi", ("Data Manual", "Upload File"))
     
-    if option == "Masukkan data manual":
-        st.write("Masukkan jumlah data:")
-        num_data = st.number_input("Jumlah data", min_value=1, step=1, value=10)
-        
+    if option == "Data Manual":
+        num_data = st.number_input("Jumlah Data", min_value=2, value=10, step=1)
         data = []
         for i in range(num_data):
-            x = st.number_input(f"Masukkan nilai X{i+1}")
-            y = st.number_input(f"Masukkan nilai Y{i+1}")
-            data.append([x, y])
+            x = st.number_input(f"Nilai X{i+1}", key=f"X{i+1}")
+            y = st.number_input(f"Nilai Y{i+1}", key=f"Y{i+1}")
+            data.append((x, y))
         
-        df = pd.DataFrame(data, columns=["X", "Y"])
-    else:
-        file = st.file_uploader("Upload file CSV/Excel", type=["csv", "xlsx"])
-        if file is not None:
-            df = pd.read_excel(file)  
-        else:
-            df = None
+        if st.button("Hitung Korelasi"):
+            X = np.array([d[0] for d in data])
+            Y = np.array([d[1] for d in data])
+            
+            correlation = calculate_correlation(X, Y)
+            st.write(f"Nilai Korelasi: {correlation:.4f}")
+            
+            # Plot grafik korelasi
+            plt.scatter(X, Y)
+            plt.xlabel("X")
+            plt.ylabel("Y")
+            plt.title("Grafik Korelasi")
+            st.pyplot(plt)
+            
+            # Analisis hasil korelasi
+            if correlation > 0:
+                st.write("Terdapat hubungan positif antara X dan Y.")
+            elif correlation < 0:
+                st.write("Terdapat hubungan negatif antara X dan Y.")
+            else:
+                st.write("Tidak terdapat hubungan linier antara X dan Y.")
     
-    if df is not None:
-        st.write("Data:")
-        st.table(df)
-        
-        correlation = df['X'].astype(float).corr(df['Y'].astype(float))
-        st.write(f"Korelasi antara X dan Y: {correlation}")
-        
-        plt.scatter(df['X'].astype(float), df['Y'].astype(float))
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Hubungan antara X dan Y')
-        st.pyplot(plt)
+    # Tambahkan bagian untuk opsi upload file jika diperlukan
 
-        st.write("Hasil analisis:")
-        if correlation > 0:
-            st.write("Variabel X dan Y memiliki hubungan linier.")
-        elif correlation < 0:
-            st.write("Variabel X dan Y memiliki hubungan berbanding terbalik.")
-
-# Page: Regresi
+# Halaman Regresi
 def regresi():
-    st.title("Regresi")
-    st.write("Silakan pilih opsi untuk memasukkan data:")
+    st.title("Analisis Regresi")
+    st.write("Halaman ini digunakan untuk melakukan analisis regresi linier sederhana.")
     
-    option = st.selectbox("Pilih opsi:", ("Masukkan data manual", "Upload file CSV/Excel"))
+    option = st.radio("Pilih Opsi", ("Data Manual", "Upload File"))
     
-    if option == "Masukkan data manual":
-        st.write("Masukkan jumlah data:")
-        num_data = st.number_input("Jumlah data", min_value=1, step=1, value=10)
-        
+    if option == "Data Manual":
+        num_data = st.number_input("Jumlah Data", min_value=2, value=10, step=1)
         data = []
         for i in range(num_data):
-            x = st.number_input(f"Masukkan nilai X{i+1}")
-            y = st.number_input(f"Masukkan nilai Y{i+1}")
-            data.append([x, y])
+            x = st.number_input(f"Nilai X{i+1}", key=f"X{i+1}")
+            y = st.number_input(f"Nilai Y{i+1}", key=f"Y{i+1}")
+            data.append((x, y))
         
-        df = pd.DataFrame(data, columns=["X", "Y"])
-    else:
-        file = st.file_uploader("Upload file CSV/Excel", type=["csv", "xlsx"])
-        if file is not None:
-            df = pd.read_excel(file)  
-        else:
-            df = None
+        if st.button("Hitung Regresi"):
+            X = np.array([d[0] for d in data])
+            Y = np.array([d[1] for d in data])
+            
+            beta_0, beta_1 = calculate_regression_coefficients(X, Y)
+            r_squared = calculate_r_squared(X, Y, beta_0, beta_1)
+            
+            st.write(f"Nilai Beta 0: {beta_0:.4f}")
+            st.write(f"Nilai Beta 1: {beta_1:.4f}")
+            st.write(f"Nilai R-Squared: {r_squared:.4f}")
+            
+            # Model regresi
+            plt.scatter(X, Y)
+            plt.plot(X, beta_0 + beta_1 * X, color='red')
+            plt.xlabel("X")
+            plt.ylabel("Y")
+            plt.title("Model Regresi")
+            st.pyplot(plt)
+            
+            # Analisis kebaikan model
+            if r_squared >= 0.7:
+                st.write("Model regresi memiliki kebaikan yang baik.")
+            elif r_squared >= 0.5:
+                st.write("Model regresi memiliki kebaikan yang cukup.")
+            else:
+                st.write("Model regresi memiliki kebaikan yang rendah.")
     
-    if df is not None:
-        st.write("Data:")
-        st.table(df)
-        
-        X = df['X'].astype(float).values.reshape(-1, 1)
-        Y = df['Y'].astype(float).values.reshape(-1, 1)
-        
-        model = LinearRegression()
-        model.fit(X, Y)
-        
-        beta_0 = model.intercept_[0]
-        beta_1 = model.coef_[0][0]
-        
-        st.write(f"Koefisien Beta 0: {beta_0}")
-        st.write(f"Koefisien Beta 1: {beta_1}")
-        
-        plt.scatter(X, Y)
-        plt.plot(X, model.predict(X), color='red')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Regresi Linier Sederhana')
-        st.pyplot(plt)
-        
-        Y_pred = model.predict(X)
-        r2 = r2_score(Y, Y_pred)
-        st.write(f"Koefisien determinasi: {r2*100:.2f}%")
+    # Tambahkan bagian untuk opsi upload file jika diperlukan
 
-# Main
+# Main Program
 def main():
-    pages = {
-        "Home": home,
-        "Korelasi": korelasi,
-        "Regresi": regresi
-    }
+    st.sidebar.title("Menu")
+    menu = st.sidebar.radio("Navigasi", ("Home", "Korelasi", "Regresi"))
     
-    st.sidebar.title("Navigasi")
-    selection = st.sidebar.radio("Pergi ke:", list(pages.keys()))
-    page = pages[selection]
-    page()
+    if menu == "Home":
+        home()
+    elif menu == "Korelasi":
+        korelasi()
+    elif menu == "Regresi":
+        regresi()
 
 if __name__ == "__main__":
     main()
